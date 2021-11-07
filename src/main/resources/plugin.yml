@@ -1,0 +1,6 @@
+name: IslandCore
+main: io.github.clayclaw.islandcore.IslandCore
+version: 0.0.1
+api-version: 1.15
+depend:
+  - Reactant
