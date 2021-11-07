@@ -1,4 +1,4 @@
-package net.brian.islandcrop.events;
+package net.brian.islandcore.crop.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

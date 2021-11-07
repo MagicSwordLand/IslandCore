@@ -1,35 +1,25 @@
-package net.brian.islandcrop.listener;
+package net.brian.islandcore.crop.listener;
 
-import net.brian.islandcrop.IslandCrop;
-import net.brian.islandcrop.events.IslandLoadEvent;
-import net.brian.islandcrop.events.IslandUnloadEvent;
+import dev.reactant.reactant.core.component.Component;
+import net.brian.islandcore.crop.events.IslandLoadEvent;
+import net.brian.islandcore.crop.events.IslandUnloadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEnterEvent;
 import world.bentobox.bentobox.api.events.island.IslandExitEvent;
-import world.bentobox.bentobox.api.events.island.IslandRegisteredEvent;
-import world.bentobox.bentobox.api.events.island.IslandUnregisteredEvent;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.PlayersManager;
 
 import java.util.Optional;
 
+@Component
 public class IslandEventsListener implements Listener {
 
-    private final BentoBox bentoBox;
-    private final PlayersManager playersManager;
-
-    public IslandEventsListener(BentoBox bentoBox){
-        this.bentoBox = bentoBox;
-        this.playersManager = bentoBox.getPlayersManager();
-    }
-
+    private BentoBox bentoBox = BentoBox.getInstance();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event){

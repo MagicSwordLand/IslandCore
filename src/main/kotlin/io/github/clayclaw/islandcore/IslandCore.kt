@@ -5,7 +5,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.plugin.java.JavaPlugin
 
-@ReactantPlugin(["io.github.clayclaw.islandcore", "net.brian.islandcore"])
+@ReactantPlugin([
+    "io.github.clayclaw.islandcore",
+    "net.brian.islandcore"
+])
 class IslandCore : JavaPlugin() {
 
     override fun onEnable() {

@@ -1,5 +1,5 @@
 name: IslandCore
-main: net.brian.islandcrop.IslandCrop
+main: net.brian.islandcore.islandcrop.IslandCrop
 version: 0.0.1
 api-version: 1.15
 depend:

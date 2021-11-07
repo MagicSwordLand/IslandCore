@@ -1,4 +1,4 @@
-package net.brian.islandcrop.objects;
+package net.brian.islandcore.crop.objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
