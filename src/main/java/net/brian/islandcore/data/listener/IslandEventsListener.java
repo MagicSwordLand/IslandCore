@@ -1,4 +1,4 @@
-package net.brian.islandcore.crop.listener;
+package net.brian.islandcore.data.listener;
 
 import dev.reactant.reactant.core.component.Component;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Component
 public class IslandEventsListener implements Listener {
 
-    private BentoBox bentoBox = BentoBox.getInstance();
+    private final BentoBox bentoBox = BentoBox.getInstance();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event){
