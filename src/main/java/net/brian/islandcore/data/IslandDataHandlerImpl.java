@@ -5,6 +5,7 @@ import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.component.lifecycle.LifeCycleHook;
 import dev.reactant.reactant.core.dependency.injection.Inject;
 import io.github.clayclaw.dbsync.module.service.DatabaseService;
+import net.brian.islandcore.IslandCore;
 import net.brian.islandcore.data.objects.Table;
 
 
@@ -45,7 +46,7 @@ public class IslandDataHandlerImpl extends DataHandler implements LifeCycleHook 
             preparedStatement.setString(2,uuid.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
-                return new Gson().fromJson(resultSet.getString("datajson"),dataClass);
+                return IslandCore.gson.fromJson(resultSet.getString("datajson"),dataClass);
             }
             else{
                 return dataClass.newInstance();
@@ -62,7 +63,7 @@ public class IslandDataHandlerImpl extends DataHandler implements LifeCycleHook 
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO "+id+" (uuid,datajson) VALUES (?,?)" +
                     " ON DUPLICATE KEY UPDATE datajson = ?");
-            String dataJson = new Gson().toJson(object);
+            String dataJson = IslandCore.gson.toJson(object);
             preparedStatement.setString(1,uuid);
             preparedStatement.setString(2,dataJson);
             preparedStatement.setString(3,dataJson);

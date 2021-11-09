@@ -2,6 +2,7 @@ package net.brian.islandcore.livestock.objects;
 
 import net.brian.islandcore.IslandCore;
 import net.brian.islandcore.common.persistent.Namespaces;
+import net.brian.islandcore.data.gson.PostProcessable;
 import net.brian.islandcore.livestock.livestocks.LiveStock;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class IslandLiveStockProfile {
+public class IslandLiveStockProfile implements PostProcessable {
 
     public final static NamespacedKey islandKey = Namespaces.islandID;
     public final static NamespacedKey stockKey = Namespaces.stock_type;
@@ -26,13 +27,6 @@ public class IslandLiveStockProfile {
 
 
     public IslandLiveStockProfile(){}
-
-
-    public void setUp(){
-        activeLiveStocks.forEach(liveStock->{
-            liveStockEntityMap.put(liveStock.instantiate(),liveStock);
-        });
-    }
 
     public void onSave(){
         activeLiveStocks.forEach(ActiveLiveStock::onSave);
@@ -47,7 +41,7 @@ public class IslandLiveStockProfile {
 
     public void spawn(LiveStock liveStock, Location location){
         ActiveLiveStock activeLiveStock = new ActiveLiveStock(liveStock,location);
-        Entity liveStockEntity = activeLiveStock.instantiate();
+        Entity liveStockEntity = activeLiveStock.getEntity();
         liveStockEntity.getPersistentDataContainer().set(islandKey, PersistentDataType.STRING,uuid);
         liveStockEntity.getPersistentDataContainer().set(stockKey,PersistentDataType.STRING,liveStock.getId());
         activeLiveStocks.add(activeLiveStock);
@@ -70,5 +64,13 @@ public class IslandLiveStockProfile {
 
     public ActiveLiveStock getLiveStock(Entity entity){
         return liveStockEntityMap.get(entity);
+    }
+
+    @Override
+    public void gsonPostProcess() {
+        activeLiveStocks.forEach(liveStock->{
+            liveStock.spawn();
+            liveStockEntityMap.put(liveStock.getEntity(),liveStock);
+        });
     }
 }

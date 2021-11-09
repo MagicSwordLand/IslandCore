@@ -23,7 +23,7 @@ class SeasonServiceImpl(
     }
 
     override fun getCurrentSeason(): SeasonType {
-
+        return SeasonType.SPRING;
     }
 
 }

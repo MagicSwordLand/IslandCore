@@ -23,11 +23,5 @@ public class IslandCropSetup implements Listener {
         cropProfile.setLastSaved(System.currentTimeMillis());
     }
 
-    @EventHandler
-    public void onLoadComplete(IslandDataLoadCompleteEvent event){
-        Island island = event.getIsland();
-        IslandCropProfile cropProfile = dataService.getData(island.getUniqueId(),IslandCropProfile.class);
-        cropProfile.setup();
-    }
 
 }

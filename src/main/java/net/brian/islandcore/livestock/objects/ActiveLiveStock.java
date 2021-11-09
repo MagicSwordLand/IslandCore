@@ -1,16 +1,17 @@
 package net.brian.islandcore.livestock.objects;
 
+import net.brian.islandcore.data.gson.PostProcessable;
 import net.brian.islandcore.livestock.LiveStockService;
 import net.brian.islandcore.livestock.livestocks.LiveStock;
 import net.brian.islandcore.common.objects.IslandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
-public class ActiveLiveStock {
+public class ActiveLiveStock implements PostProcessable {
     public static LiveStockService liveStockManager;
 
-    transient Entity entity;
-    transient LiveStock liveStock;
+    private transient Entity entity;
+    private transient LiveStock liveStock;
 
     String type;
     IslandLocation location;
@@ -21,12 +22,7 @@ public class ActiveLiveStock {
         this.location = new IslandLocation(location);
         type = liveStock.getId();
         this.liveStock = liveStock;
-    }
-
-    public Entity instantiate(){
-        liveStock = liveStockManager.getLiveStock(type);
-        entity = liveStock.instantiate(location.getLocation());
-        return entity;
+        spawn();
     }
 
     public void onSave(){
@@ -41,4 +37,17 @@ public class ActiveLiveStock {
 
     }
 
+    public void spawn() {
+        if(entity != null){
+            entity.remove();
+        }
+        liveStock = liveStockManager.getLiveStock(type);
+        entity = liveStock.instantiate(location.getLocation());
+    }
+
+    @Override
+    public void gsonPostProcess() {
+        liveStock = liveStockManager.getLiveStock(type);
+        entity = liveStock.instantiate(location.getLocation());
+    }
 }

@@ -10,6 +10,7 @@ import net.brian.islandcore.data.events.IslandDataLoadCompleteEvent;
 import net.brian.islandcore.data.events.IslandDataPrepareSaveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class IslandDataService implements Listener {
     @Inject IslandDataHandlerImpl dataHandler;
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onLoad(IslandLoadEvent event){
         String uuid = event.getIsland().getUniqueId();
         CompletableFuture.runAsync(()->{
@@ -34,7 +35,7 @@ public class IslandDataService implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onUnload(IslandUnloadEvent event){
         Bukkit.getPluginManager().callEvent(new IslandDataPrepareSaveEvent(event.getIsland()));
 

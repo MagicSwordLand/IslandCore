@@ -2,9 +2,10 @@ package net.brian.islandcore.crop.objects;
 
 import net.brian.islandcore.crop.crops.IslandCrop;
 import net.brian.islandcore.crop.managers.IslandCropManager;
+import net.brian.islandcore.data.gson.PostProcessable;
 import org.bukkit.Location;
 
-public class ActiveCrop {
+public class ActiveCrop implements PostProcessable {
 
     public static IslandCropManager islandCropManager;
 
@@ -12,7 +13,7 @@ public class ActiveCrop {
     String type;
 
     CropLocation cropLocation;
-    long age;
+    int age;
     int water;
 
 
@@ -27,10 +28,6 @@ public class ActiveCrop {
         return cropLocation;
     }
 
-    public void instantiate(){
-        cropType.instantiate(cropLocation,age);
-    }
-
     public IslandCrop getCropType(){
         if(cropType == null){
             return islandCropManager.getCrop(type);
@@ -38,5 +35,13 @@ public class ActiveCrop {
         else return cropType;
     }
 
+    public void age(int amount){
+        amount+=amount;
+    }
 
+
+    @Override
+    public void gsonPostProcess() {
+        cropType.instantiate(cropLocation,age);
+    }
 }
