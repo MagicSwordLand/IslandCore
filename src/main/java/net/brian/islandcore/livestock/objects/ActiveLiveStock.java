@@ -1,14 +1,13 @@
 package net.brian.islandcore.livestock.objects;
 
-import net.brian.islandcore.livestock.LiveStockManager;
+import net.brian.islandcore.livestock.LiveStockService;
 import net.brian.islandcore.livestock.livestocks.LiveStock;
 import net.brian.islandcore.common.objects.IslandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 
 public class ActiveLiveStock {
-    public static LiveStockManager liveStockManager;
+    public static LiveStockService liveStockManager;
 
     transient Entity entity;
     transient LiveStock liveStock;

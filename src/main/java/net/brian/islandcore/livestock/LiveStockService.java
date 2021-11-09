@@ -16,7 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 
 @Component
-public class LiveStockManager implements LifeCycleHook {
+public class LiveStockService implements LifeCycleHook {
 
     @Inject IslandDataService dataService;
 
