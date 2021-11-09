@@ -1,17 +1,25 @@
 package net.brian.islandcore.crop.objects;
 
-import org.bukkit.Bukkit;
+import net.brian.islandcore.crop.crops.IslandCrop;
+import net.brian.islandcore.crop.managers.IslandCropManager;
 import org.bukkit.Location;
 
 public class ActiveCrop {
 
-    CropLocation cropLocation;
+    public static IslandCropManager islandCropManager;
+
+    transient IslandCrop cropType;
     String type;
 
+    CropLocation cropLocation;
+    long age;
+    int water;
 
-    public ActiveCrop(Location loc, String type){
+
+    public ActiveCrop(Location loc, IslandCrop cropType){
         cropLocation = new CropLocation(loc);
-        this.type = type;
+        this.cropType = cropType;
+        this.type = cropType.getId();
 
     }
 
@@ -20,7 +28,15 @@ public class ActiveCrop {
     }
 
     public void instantiate(){
-
+        cropType.instantiate(cropLocation,age);
     }
+
+    public IslandCrop getCropType(){
+        if(cropType == null){
+            return islandCropManager.getCrop(type);
+        }
+        else return cropType;
+    }
+
 
 }

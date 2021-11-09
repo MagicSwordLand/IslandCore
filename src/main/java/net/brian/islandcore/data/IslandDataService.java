@@ -36,10 +36,9 @@ public class IslandDataService implements Listener {
 
     @EventHandler
     public void onUnload(IslandUnloadEvent event){
-
         Bukkit.getPluginManager().callEvent(new IslandDataPrepareSaveEvent(event.getIsland()));
-        String uuid = event.getIsland().getUniqueId();
 
+        String uuid = event.getIsland().getUniqueId();
         CompletableFuture.runAsync(()->{
            dataHandler.getTables().forEach(table -> {
                dataHandler.saveData(table.getId(),uuid,table.getData(uuid));

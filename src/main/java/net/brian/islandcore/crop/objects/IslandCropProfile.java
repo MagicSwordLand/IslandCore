@@ -1,18 +1,21 @@
 package net.brian.islandcore.crop.objects;
 
 import com.google.gson.annotations.Expose;
+import kotlin.jvm.Transient;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class IslandCropProfile {
 
     private Long lastSaved;
     private int cropLimit = 0;
+    List<ActiveCrop> crops;
 
-    @Expose
-    HashMap<ActiveCrop,Entity> cropEntityHashMap = new HashMap<>();
 
+    private transient HashMap<ActiveCrop, Block> cropEntityHashMap = new HashMap<>();
 
 
 
@@ -20,5 +23,8 @@ public class IslandCropProfile {
         lastSaved = currentTime;
     }
 
+    public void setup(){
+        crops.forEach(ActiveCrop::instantiate);
+    }
 
 }
