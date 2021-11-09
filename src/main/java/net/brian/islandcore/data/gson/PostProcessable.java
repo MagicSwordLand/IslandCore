@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public interface PostProcessable {
 
-    void gsonPostProcess();
+    void gsonPostDeserialize();
+    void gsonPostSerialize();
 
     class PostProcessingEnabler implements TypeAdapterFactory{
 
@@ -22,6 +23,9 @@ public interface PostProcessable {
             return new TypeAdapter<T>() {
                 @Override
                 public void write(JsonWriter jsonWriter, T t) throws IOException {
+                    if(t instanceof PostProcessable){
+                        ((PostProcessable) t).gsonPostSerialize();
+                    }
                     delegate.write(jsonWriter,t);
                 }
 
@@ -29,7 +33,7 @@ public interface PostProcessable {
                 public T read(JsonReader jsonReader) throws IOException {
                     T object = delegate.read(jsonReader);
                     if(object instanceof PostProcessable){
-                        ((PostProcessable) object).gsonPostProcess();
+                        ((PostProcessable) object).gsonPostDeserialize();
                     }
                     return object;
                 }

@@ -26,10 +26,15 @@ public class IslandCropProfile implements PostProcessable {
 
 
     @Override
-    public void gsonPostProcess() {
+    public void gsonPostDeserialize() {
         int minutesPast = (int) ((System.currentTimeMillis()-lastSaved)/60000);
         crops.forEach(activeCrop -> {
             activeCrop.age(minutesPast);
         });
+    }
+
+    @Override
+    public void gsonPostSerialize() {
+
     }
 }

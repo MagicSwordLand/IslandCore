@@ -28,13 +28,8 @@ public class IslandLiveStockProfile implements PostProcessable {
 
     public IslandLiveStockProfile(){}
 
-    public void onSave(){
-        activeLiveStocks.forEach(ActiveLiveStock::onSave);
-    }
-
     public void onQuit(){
         activeLiveStocks.forEach(liveStock->{
-            liveStock.onSave();
             liveStock.getEntity().remove();
         });
     }
@@ -67,10 +62,14 @@ public class IslandLiveStockProfile implements PostProcessable {
     }
 
     @Override
-    public void gsonPostProcess() {
+    public void gsonPostDeserialize() {
         activeLiveStocks.forEach(liveStock->{
-            liveStock.spawn();
             liveStockEntityMap.put(liveStock.getEntity(),liveStock);
         });
+    }
+
+    @Override
+    public void gsonPostSerialize() {
+
     }
 }

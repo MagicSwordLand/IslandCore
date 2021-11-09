@@ -25,9 +25,6 @@ public class ActiveLiveStock implements PostProcessable {
         spawn();
     }
 
-    public void onSave(){
-        location = new IslandLocation(entity.getLocation());
-    }
 
     public Entity getEntity(){
         return entity;
@@ -46,8 +43,13 @@ public class ActiveLiveStock implements PostProcessable {
     }
 
     @Override
-    public void gsonPostProcess() {
+    public void gsonPostDeserialize() {
         liveStock = liveStockManager.getLiveStock(type);
         entity = liveStock.instantiate(location.getLocation());
+    }
+
+    @Override
+    public void gsonPostSerialize() {
+        location = new IslandLocation(entity.getLocation());
     }
 }

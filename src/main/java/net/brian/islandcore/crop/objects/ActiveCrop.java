@@ -41,7 +41,12 @@ public class ActiveCrop implements PostProcessable {
 
 
     @Override
-    public void gsonPostProcess() {
+    public void gsonPostDeserialize() {
         cropType.instantiate(cropLocation,age);
+    }
+
+    @Override
+    public void gsonPostSerialize() {
+
     }
 }
