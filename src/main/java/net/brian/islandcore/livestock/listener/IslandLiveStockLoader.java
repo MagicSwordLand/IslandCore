@@ -18,6 +18,8 @@ public class IslandLiveStockLoader implements Listener {
     @Inject
     IslandDataService dataService;
 
+
+
     @EventHandler
     public void onLoad(IslandDataLoadCompleteEvent event){
         Island island = event.getIsland();
@@ -25,12 +27,6 @@ public class IslandLiveStockLoader implements Listener {
         profile.setUuid(island.getUniqueId());
     }
 
-    @EventHandler
-    public void onSave(IslandDataPrepareSaveEvent event){
-        Island island = event.getIsland();
-        IslandLiveStockProfile profile = dataService.getData(island.getUniqueId(),IslandLiveStockProfile.class);
-        profile.onSave();
-    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(IslandUnloadEvent event){

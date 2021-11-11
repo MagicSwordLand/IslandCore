@@ -2,8 +2,6 @@ package net.brian.islandcore.data;
 
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
-import dev.reactant.reactant.extra.net.BaseUrl;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
 import net.brian.islandcore.crop.events.IslandUnloadEvent;
 import net.brian.islandcore.data.events.IslandDataLoadCompleteEvent;
@@ -13,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -42,7 +39,7 @@ public class IslandDataService implements Listener {
         String uuid = event.getIsland().getUniqueId();
         CompletableFuture.runAsync(()->{
            dataHandler.getTables().forEach(table -> {
-               dataHandler.saveData(table.getId(),uuid,table.getData(uuid));
+               dataHandler.saveData(table.getId(),uuid, table.getData(uuid));
            });
         });
 

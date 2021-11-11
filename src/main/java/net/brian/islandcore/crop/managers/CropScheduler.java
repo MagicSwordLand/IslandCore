@@ -1,7 +1,6 @@
 package net.brian.islandcore.crop.managers;
 
-import dev.reactant.reactant.extra.net.BaseUrl;
-import net.brian.islandcore.IslandCore;
+import net.brian.islandcore.IslandCropsAndLiveStocks;
 import org.bukkit.Bukkit;
 
 public class CropScheduler {
@@ -12,7 +11,7 @@ public class CropScheduler {
     }
 
     public void run(){
-        Bukkit.getScheduler().runTaskTimer(IslandCore.getInstance(),()->{
+        Bukkit.getScheduler().runTaskTimer(IslandCropsAndLiveStocks.getInstance(),()->{
 
         },20*60,0);
     }

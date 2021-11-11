@@ -10,10 +10,12 @@ import net.brian.islandcore.data.gson.PostProcessable;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class IslandCore extends JavaPlugin {
+@ReactantPlugin(servicePackages = "net.brian.islandcore")
+public class IslandCropsAndLiveStocks extends JavaPlugin {
 
-    private static IslandCore instance;
+    private static IslandCropsAndLiveStocks instance;
     public static Gson gson;
+
 
     @Override
     public void onLoad(){
@@ -33,7 +35,7 @@ public class IslandCore extends JavaPlugin {
 
     }
 
-    public static IslandCore getInstance(){
+    public static IslandCropsAndLiveStocks getInstance(){
         return instance;
     }
 }

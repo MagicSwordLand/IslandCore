@@ -1,6 +1,5 @@
 package net.brian.islandcore.livestock.objects;
 
-import net.brian.islandcore.IslandCore;
 import net.brian.islandcore.common.persistent.Namespaces;
 import net.brian.islandcore.data.gson.PostProcessable;
 import net.brian.islandcore.livestock.livestocks.LiveStock;
@@ -12,7 +11,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class IslandLiveStockProfile implements PostProcessable {
 

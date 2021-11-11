@@ -5,7 +5,6 @@ import dev.reactant.reactant.core.component.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-@Component
 public class CropBreakListener implements Listener {
 
 
