@@ -15,8 +15,8 @@ public class ActiveLiveStock implements PostProcessable {
 
     String type;
     IslandLocation location;
-    int age;
-    int food;
+    private int age;
+    private int food;
 
     public ActiveLiveStock(LiveStock liveStock, Location location){
         this.location = new IslandLocation(location);
@@ -38,14 +38,17 @@ public class ActiveLiveStock implements PostProcessable {
         if(entity != null){
             entity.remove();
         }
-        liveStock = liveStockManager.getLiveStock(type);
         entity = liveStock.instantiate(location.getLocation());
     }
 
     @Override
     public void gsonPostDeserialize() {
         liveStock = liveStockManager.getLiveStock(type);
-        entity = liveStock.instantiate(location.getLocation());
+        spawn();
+    }
+
+    public void age(int amount){
+        age+=amount;
     }
 
     @Override

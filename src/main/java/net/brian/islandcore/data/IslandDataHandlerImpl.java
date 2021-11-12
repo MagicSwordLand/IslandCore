@@ -5,14 +5,18 @@ import dev.reactant.reactant.core.component.lifecycle.LifeCycleHook;
 import dev.reactant.reactant.core.dependency.injection.Inject;
 import io.github.clayclaw.dbsync.module.service.DatabaseService;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
+import net.brian.islandcore.common.objects.IslandLogger;
+import net.brian.islandcore.data.objects.IslandData;
 import net.brian.islandcore.data.objects.Table;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 @Component
 public class IslandDataHandlerImpl extends DataHandler implements LifeCycleHook {
@@ -42,25 +46,29 @@ public class IslandDataHandlerImpl extends DataHandler implements LifeCycleHook 
     public <T> T getData(String id, String uuid, Class<T> dataClass) {
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM island_"+id+" WHERE uuid = ? LIMIT 1");
-            preparedStatement.setString(2,uuid.toString());
+            preparedStatement.setString(1,uuid);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
-                return IslandCropsAndLiveStocks.gson.fromJson(resultSet.getString("datajson"),dataClass);
+                String dataJson = resultSet.getString("datajson");
+                if(dataJson != null){
+                    return IslandCropsAndLiveStocks.gson.fromJson(resultSet.getString("datajson"),dataClass);
+                }
             }
-            else{
-                return dataClass.newInstance();
+            if(dataClass.getSuperclass().equals(IslandData.class)){
+                return dataClass.getConstructor(String.class).newInstance(uuid);
             }
-        } catch (SQLException | InstantiationException | IllegalAccessException e) {
+            return dataClass.newInstance();
+        } catch (SQLException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
 
     @Override
     public void saveData(String id, String uuid, Object data) {
         try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO "+id+" (uuid,datajson) VALUES (?,?)" +
+            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO island_"+id+" (uuid,datajson) VALUES (?,?)" +
                     " ON DUPLICATE KEY UPDATE datajson = ?");
             String dataJson = IslandCropsAndLiveStocks.gson.toJson(data);
             preparedStatement.setString(1,uuid);

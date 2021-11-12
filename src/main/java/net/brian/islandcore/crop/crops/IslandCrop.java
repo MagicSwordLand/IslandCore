@@ -1,8 +1,11 @@
 package net.brian.islandcore.crop.crops;
 
 import net.brian.islandcore.IslandCropsAndLiveStocks;
-import net.brian.islandcore.crop.objects.CropLocation;
+import net.brian.islandcore.common.objects.IslandLocation;
+import net.brian.islandcore.crop.events.IslandLoadEvent;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 
 public abstract class IslandCrop implements Listener {
@@ -19,7 +22,7 @@ public abstract class IslandCrop implements Listener {
         return id;
     }
 
-    public abstract void instantiate(CropLocation location, long age);
+    public abstract Block instantiate(IslandLocation location, long age);
 
 
     public NamespacedKey getKey(){

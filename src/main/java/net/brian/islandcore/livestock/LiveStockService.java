@@ -9,14 +9,11 @@ import net.brian.islandcore.livestock.livestocks.GoldenCow;
 import net.brian.islandcore.livestock.livestocks.LiveStock;
 import net.brian.islandcore.livestock.objects.ActiveLiveStock;
 import net.brian.islandcore.livestock.objects.IslandLiveStockProfile;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.persistence.PersistentDataType;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.HashMap;
@@ -41,7 +38,7 @@ public class LiveStockService implements LifeCycleHook {
     }
 
     public ActiveLiveStock getActiveLiveStock(Entity entity){
-        IslandLiveStockProfile profile = getOwner(entity);
+        IslandLiveStockProfile profile = getFromLiveStock(entity);
         return profile.getLiveStock(entity);
     }
 
@@ -49,7 +46,7 @@ public class LiveStockService implements LifeCycleHook {
         return entity.getPersistentDataContainer().has(Namespaces.islandID,PersistentDataType.STRING);
     }
 
-    public IslandLiveStockProfile getOwner(Entity entity){
+    public IslandLiveStockProfile getFromLiveStock(Entity entity){
         String islandID = entity.getPersistentDataContainer().get(Namespaces.islandID, PersistentDataType.STRING);
         if(islandID == null) return null;
         return getData(islandID);

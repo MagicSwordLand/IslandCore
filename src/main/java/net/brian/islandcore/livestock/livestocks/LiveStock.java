@@ -1,12 +1,14 @@
 package net.brian.islandcore.livestock.livestocks;
 
+import io.github.clayclaw.clawlibrary.java.ColorUtil;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public abstract class LiveStock {
-    String id;
-    String mythic_mob;
+    protected String id;
+    protected String mythic_mob;
+    protected String name;
 
     int grow_time;
     int max_food;
@@ -20,4 +22,8 @@ public abstract class LiveStock {
         return id;
     }
 
+
+    public String getName() {
+        return ColorUtil.translateColor(name);
+    }
 }

@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
+
 @Component
 public class TestListener implements Listener {
 
@@ -17,6 +18,7 @@ public class TestListener implements Listener {
 
     @EventHandler
     public void onShift(PlayerToggleSneakEvent event){
+        event.getPlayer().sendMessage("TestListener run");
         IslandLiveStockProfile profile = liveStockService.getData(event.getPlayer(),event.getPlayer().getWorld());
         profile.spawn(liveStockService.getLiveStock("GoldenCow"),event.getPlayer().getLocation());
     }
@@ -25,4 +27,5 @@ public class TestListener implements Listener {
     public void rightClick(PlayerInteractEntityEvent event){
         event.getPlayer().sendMessage(event.getRightClicked().getUniqueId()+" : uuid");
     }
+
 }

@@ -19,11 +19,13 @@ public class IslandEntityListener implements Listener {
     @EventHandler
     public void onDeath(EntityDeathEvent event){
         Entity entity = event.getEntity();
-        IslandLiveStockProfile profile = liveStockManager.getOwner(entity);
+        IslandLiveStockProfile profile = liveStockManager.getFromLiveStock(entity);
         if(profile != null){
             profile.remove(entity);
             ActiveLiveStock liveStock = profile.getLiveStock(entity);
-            liveStock.drop();
+            if(liveStock != null){
+                liveStock.drop();
+            }
         }
     }
 

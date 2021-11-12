@@ -1,8 +1,8 @@
 package net.brian.islandcore.crop.crops;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
-import net.brian.islandcore.crop.objects.CropLocation;
-import org.bukkit.event.Event;
+import net.brian.islandcore.common.objects.IslandLocation;
+import org.bukkit.block.Block;
 
 public class Tomato extends IslandCrop{
 
@@ -13,7 +13,7 @@ public class Tomato extends IslandCrop{
     }
 
     @Override
-    public void instantiate(CropLocation location, long age) {
+    public Block instantiate(IslandLocation location, long age) {
 
     }
 

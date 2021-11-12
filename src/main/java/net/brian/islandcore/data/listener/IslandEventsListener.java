@@ -15,19 +15,28 @@ import world.bentobox.bentobox.api.events.island.IslandExitEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 @Component
 public class IslandEventsListener implements Listener {
 
     private final BentoBox bentoBox = BentoBox.getInstance();
+    private final Logger logger = Logger.getLogger("IslandData");
+
+    private void log(String msg){
+        logger.log(Level.INFO,msg);
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event){
-       Optional<Island> island = bentoBox.getIslands().getIslandAt(event.getPlayer().getLocation());
+        Optional<Island> island = bentoBox.getIslands().getIslandAt(event.getPlayer().getLocation());
         island.ifPresent(value -> {
             if(value.getPlayersOnIsland().size() == 1){
                 IslandLoadEvent islandLoadEvent = new IslandLoadEvent(value,event.getPlayer());
                 islandLoadEvent.callEvent();
+                logger.log(Level.INFO,"Join event");
             }
         });
     }
@@ -39,10 +48,10 @@ public class IslandEventsListener implements Listener {
             if(value.getPlayersOnIsland().size() == 1){
                 IslandUnloadEvent islandEvent = new IslandUnloadEvent(value,event.getPlayer());
                 islandEvent.callEvent();
+                log("quit event");
             }
         });
     }
-
 
     @EventHandler
     public void onEnter(IslandEnterEvent event){
@@ -50,6 +59,7 @@ public class IslandEventsListener implements Listener {
         if(island.getPlayersOnIsland().size() == 0){
             IslandLoadEvent islandLoadEvent = new IslandLoadEvent(island, Bukkit.getPlayer(event.getPlayerUUID()));
             islandLoadEvent.callEvent();
+            log("enter event");
         }
     }
 
@@ -59,6 +69,7 @@ public class IslandEventsListener implements Listener {
         if(island.getPlayersOnIsland().size() == 1){
             IslandUnloadEvent islandUnloadEvent = new IslandUnloadEvent(island,Bukkit.getPlayer(event.getPlayerUUID()));
             islandUnloadEvent.callEvent();
+            log("on Exit");
         }
     }
 

@@ -1,31 +1,35 @@
 package net.brian.islandcore.crop.objects;
 
+import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.crop.crops.IslandCrop;
 import net.brian.islandcore.crop.managers.IslandCropManager;
 import net.brian.islandcore.data.gson.PostProcessable;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.event.block.BlockCanBuildEvent;
 
 public class ActiveCrop implements PostProcessable {
 
     public static IslandCropManager islandCropManager;
 
+    transient Block block;
     transient IslandCrop cropType;
     String type;
 
-    CropLocation cropLocation;
+    IslandLocation location;
     int age;
     int water;
 
 
     public ActiveCrop(Location loc, IslandCrop cropType){
-        cropLocation = new CropLocation(loc);
+        location = new IslandLocation(loc);
         this.cropType = cropType;
         this.type = cropType.getId();
 
     }
 
-    public CropLocation getLocation(){
-        return cropLocation;
+    public IslandLocation getLocation(){
+        return location;
     }
 
     public IslandCrop getCropType(){
@@ -36,17 +40,19 @@ public class ActiveCrop implements PostProcessable {
     }
 
     public void age(int amount){
-        amount+=amount;
+        this.age+=amount;
     }
 
 
     @Override
     public void gsonPostDeserialize() {
-        cropType.instantiate(cropLocation,age);
+        cropType.instantiate(location,age);
+        block = location.getLocation().getBlock();
     }
 
     @Override
     public void gsonPostSerialize() {
-
     }
+
+
 }

@@ -3,13 +3,14 @@ package net.brian.islandcore.crop.objects;
 import com.google.gson.annotations.Expose;
 import kotlin.jvm.Transient;
 import net.brian.islandcore.data.gson.PostProcessable;
+import net.brian.islandcore.data.objects.IslandData;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class IslandCropProfile implements PostProcessable {
+public class IslandCropProfile extends IslandData implements PostProcessable {
 
     private Long lastSaved;
     private int cropLimit = 0;
@@ -18,10 +19,8 @@ public class IslandCropProfile implements PostProcessable {
 
     private transient HashMap<ActiveCrop, Block> cropEntityHashMap = new HashMap<>();
 
-
-
-    public void setLastSaved(Long currentTime){
-        lastSaved = currentTime;
+    public IslandCropProfile(String uuid) {
+        super(uuid);
     }
 
 
@@ -35,6 +34,6 @@ public class IslandCropProfile implements PostProcessable {
 
     @Override
     public void gsonPostSerialize() {
-
+        lastSaved = System.currentTimeMillis();
     }
 }
