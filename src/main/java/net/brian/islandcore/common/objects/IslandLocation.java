@@ -14,6 +14,10 @@ public class IslandLocation {
         world = location.getWorld().getName();
     }
 
+    public static IslandLocation getLocation(Location location){
+        return new IslandLocation(location);
+    }
+
     public Location getLocation(){
         return new Location(Bukkit.getWorld(world),x,y,z);
     }

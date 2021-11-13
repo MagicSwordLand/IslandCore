@@ -42,21 +42,13 @@ public interface PostProcessable {
                 public void write(JsonWriter jsonWriter, T t) throws IOException {
                     if (t instanceof PostProcessable) {
                         try {
-                            CompletableFuture<Void> task = CompletableFuture.runAsync(()->{
-                                        IslandLogger.logInfo("Task starting");
-                                        ((PostProcessable) t).gsonPostSerialize();
-                                        IslandLogger.logInfo("Task finished");
-                                    }
-                            , mainThread);
-                            IslandLogger.logInfo("write start blocking");
-                            task.get();
-                            IslandLogger.logInfo("write blocking complete");
+                            CompletableFuture.runAsync(((PostProcessable) t)::gsonPostSerialize
+                            , mainThread).get();
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }
                     }
                     delegate.write(jsonWriter,t);
-                    IslandLogger.logInfo("wrote out ");
                 }
 
                 @Override
@@ -64,9 +56,7 @@ public interface PostProcessable {
                     T object = delegate.read(jsonReader);
                     if (object instanceof PostProcessable) {
                         try {
-                            IslandLogger.logInfo("read info start blocking");
                             CompletableFuture.runAsync(((PostProcessable) object)::gsonPostDeserialize,mainThread).get();
-                            IslandLogger.logInfo("Blocking complete");
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }

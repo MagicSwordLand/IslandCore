@@ -3,8 +3,10 @@ package net.brian.islandcore.data;
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
+import net.brian.islandcore.common.objects.IslandLogger;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
 import net.brian.islandcore.crop.events.IslandUnloadEvent;
+import net.brian.islandcore.crop.objects.IslandCropProfile;
 import net.brian.islandcore.data.events.IslandDataLoadCompleteEvent;
 import net.brian.islandcore.data.events.IslandDataPrepareSaveEvent;
 import net.brian.islandcore.data.gson.PostQuitProcessable;
@@ -18,6 +20,8 @@ import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -35,16 +39,19 @@ public class IslandDataService implements Listener {
         String uuid = event.getIsland().getUniqueId();
         CompletableFuture.runAsync(()->{
             dataHandler.getTables().forEach(table ->{
-                    Object object = dataHandler.getData(table.getId(),uuid,table.getDataClass());
-                    if(object == null) {
-                        Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(),()->event.getTriggered().kick(net.kyori.adventure.text.Component.text("你的島嶼載入資料出錯 請再次嘗試登入 或聯絡管理員")));
-                        return;
-                    }
-                    table.setData(uuid,object);
+                Object object = dataHandler.getData(table.getId(),uuid,table.getDataClass());
+                if(object == null) {
+                    Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(),()->event.getTriggered().kick(net.kyori.adventure.text.Component.text("你的島嶼載入資料出錯 請再次嘗試登入 或聯絡管理員")));
+                    return;
+                }
+                table.setData(uuid,object);
             });
         }).thenRun(()->{
             if(isLoaded(event.getIsland())){
-                Bukkit.getPluginManager().callEvent(new IslandDataLoadCompleteEvent(event.getIsland()));
+                IslandLogger.logInfo("prepare fire load complete");
+                IslandDataLoadCompleteEvent loadCompleteEvent = new IslandDataLoadCompleteEvent(event.getIsland());
+                loadCompleteEvent.callEvent();
+                IslandLogger.logInfo("Fired");
             }
         });
     }
@@ -53,14 +60,17 @@ public class IslandDataService implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onUnload(IslandUnloadEvent event){
         loadedIsland.remove(event.getIsland());
-        Bukkit.getPluginManager().callEvent(new IslandDataPrepareSaveEvent(event.getIsland()));
+        IslandDataPrepareSaveEvent prepareSaveEvent = new IslandDataPrepareSaveEvent(event.getIsland());
+        prepareSaveEvent.callEvent();
         String uuid = event.getIsland().getUniqueId();
         CompletableFuture.runAsync(()->{
            dataHandler.getTables().forEach(table -> {
                Object data = table.getData(uuid);
-               dataHandler.saveData(table.getId(),uuid, data);
-               if(data instanceof PostQuitProcessable) {
-                   Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(), ((PostQuitProcessable) data)::onQuit);
+               if(data != null){
+                   dataHandler.saveData(table.getId(),uuid, data);
+                   if(data instanceof PostQuitProcessable) {
+                       Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(), ((PostQuitProcessable) data)::onQuit);
+                   }
                }
            });
         });
@@ -79,4 +89,5 @@ public class IslandDataService implements Listener {
     public boolean isLoaded(Island island){
         return loadedIsland.contains(island);
     }
+
 }

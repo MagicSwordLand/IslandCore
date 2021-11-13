@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compileOnly("dev.reactant:reactant:0.2.3")
-    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("world.bentobox:bentobox:1.18.0-SNAPSHOT")
 
     // Load jar libraries from "libs" folder

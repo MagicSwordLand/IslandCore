@@ -1,4 +1,4 @@
-package net.brian.islandcore.crop.managers;
+package net.brian.islandcore.crop;
 
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.component.lifecycle.LifeCycleHook;
@@ -6,18 +6,26 @@ import dev.reactant.reactant.core.dependency.injection.Inject;
 import dev.reactant.reactant.extra.config.type.MultiConfigs;
 import io.github.clayclaw.clawlibrary.reloader.ReloaderComponent;
 import io.lumine.mythic.lib.api.item.NBTItem;
+import net.brian.islandcore.common.persistent.BlockMeta;
 import net.brian.islandcore.crop.crops.IslandCrop;
+import net.brian.islandcore.crop.crops.Tomato;
 import net.brian.islandcore.crop.objects.ActiveCrop;
 import net.brian.islandcore.crop.objects.IslandCropProfile;
 import net.brian.islandcore.data.IslandDataService;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
-public class IslandCropManager implements LifeCycleHook, ReloaderComponent {
+public class IslandCropService implements LifeCycleHook, ReloaderComponent {
+
+    private final BentoBox bentoBox = BentoBox.getInstance();
 
     @Inject
     IslandDataService islandDataService;
@@ -32,6 +40,7 @@ public class IslandCropManager implements LifeCycleHook, ReloaderComponent {
     public void onEnable(){
         islandDataService.register("crops", IslandCropProfile.class);
         ActiveCrop.islandCropManager = this;
+        cropMap.put("tomato",new Tomato());
     }
 
     @Override
@@ -42,13 +51,37 @@ public class IslandCropManager implements LifeCycleHook, ReloaderComponent {
         });
     }
 
+    public ActiveCrop getActiveCrop(Block block){
+        if(isCrop(block)){
+            IslandCropProfile profile = getProfileFromCrop(block);
+            if(profile != null) return profile.getCrop(block);
+        }
+        return null;
+    }
+
+    public IslandCropProfile getProfile(String uuid){
+        return islandDataService.getData(uuid,IslandCropProfile.class);
+    }
+
+    public IslandCropProfile getProfileFromCrop(Block block){
+        String uuid = BlockMeta.readString(block,"island_uuid");
+        if(uuid != null){
+            return getProfile(uuid);
+        }
+        return null;
+    }
+
+    public boolean isCrop(Block block){
+        return block.hasMetadata("island_uuid");
+    }
+
     public IslandCrop getCrop(String id){
         return cropMap.get(id);
     }
 
     public static String readSeed(ItemStack itemStack){
         NBTItem nbtItem = NBTItem.get(itemStack);
-        return nbtItem.getString("MMOITEMS_SEED");
+        return nbtItem.getString("MMOITEMS_SEEDTYPE");
     }
 
 
