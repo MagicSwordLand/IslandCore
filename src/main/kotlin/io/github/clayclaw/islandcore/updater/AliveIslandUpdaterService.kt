@@ -25,7 +25,7 @@ class AliveIslandUpdaterService(
                     updaterDisposables[e.island.uniqueId] = updaters
                         .map {
                             schedulerService.interval(it.cycleTime).subscribe { _ ->
-                                it.onUpdate()
+                                it.onUpdate(e.island)
                             }
                         }
                         .toMutableList()
