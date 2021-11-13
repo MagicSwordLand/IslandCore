@@ -13,17 +13,19 @@ class SeasonServiceImpl(
     private val schedulerService: SchedulerService
 ): SeasonService, LifeCycleHook {
 
+    private var currentSeason: SeasonType = SeasonType.SPRING
+
     override fun onEnable() {
         seasonAPI.service.getSeason()
             .subscribeOn(Schedulers.io())
             .observeOn(schedulerService.mainThreadScheduler)
             .subscribe {
-
+                currentSeason = it.type
             }
     }
 
     override fun getCurrentSeason(): SeasonType {
-
+        return currentSeason
     }
 
 }
