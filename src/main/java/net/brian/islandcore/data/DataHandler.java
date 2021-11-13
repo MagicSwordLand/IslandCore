@@ -12,7 +12,7 @@ public abstract class DataHandler {
 
     protected abstract <T> T getData(String id, String uuid,Class<T> dataClass);
 
-    protected abstract void saveData(String id,String uuid,Object object);
+    protected abstract void saveData(String id,String uuid,Object data);
 
     protected abstract Connection getConnection();
 

@@ -1,7 +1,9 @@
 name: IslandCore
-main: net.brian.islandcore.islandcrop.IslandCrop
+main: net.brian.islandcore.IslandCropsAndLiveStocks
 version: 0.0.1
 api-version: 1.15
 depend:
   - Reactant
   - BentoBox
+  - MMOItems
+  - MythicLib

@@ -6,8 +6,7 @@ import org.apache.logging.log4j.Logger
 import org.bukkit.plugin.java.JavaPlugin
 
 @ReactantPlugin([
-    "io.github.clayclaw.islandcore",
-    "net.brian.islandcore"
+    "io.github.clayclaw.islandcore"
 ])
 class IslandCore : JavaPlugin() {
 

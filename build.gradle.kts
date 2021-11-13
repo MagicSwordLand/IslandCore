@@ -17,6 +17,9 @@ java {
     sourceCompatibility = JavaVersion.VERSION_16
     targetCompatibility = JavaVersion.VERSION_16
 }
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "16"
