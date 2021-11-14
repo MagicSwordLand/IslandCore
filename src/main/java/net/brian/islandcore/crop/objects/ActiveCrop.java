@@ -4,6 +4,7 @@ import com.gmail.filoghost.holographicdisplays.HolographicDisplays;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import io.github.clayclaw.islandcore.IslandCore;
+import io.github.clayclaw.islandcore.season.SeasonType;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.common.objects.IslandLogger;
@@ -70,6 +71,15 @@ public class ActiveCrop implements PostProcessable {
                     updateAppearance();
                 }
             }
+        }
+    }
+
+    public void age(SeasonType seasonType){
+        if(seasonType.equals(cropType.getMainSeason())){
+            age(7);
+        }
+        else if(seasonType.equals(cropType.getWeakSeason())){
+            age(5);
         }
     }
 

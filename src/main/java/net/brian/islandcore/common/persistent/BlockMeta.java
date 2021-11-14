@@ -32,5 +32,4 @@ public class BlockMeta {
         return values.size() > 0 ? values.get(0).asInt():null;
     }
 
-
 }

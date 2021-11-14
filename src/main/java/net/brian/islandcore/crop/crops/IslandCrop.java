@@ -1,5 +1,6 @@
 package net.brian.islandcore.crop.crops;
 
+import io.github.clayclaw.islandcore.season.SeasonType;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
@@ -19,6 +20,8 @@ public abstract class IslandCrop implements Listener {
     protected int grow_time;
     protected transient Material material;
     protected HarvestType harvestType;
+    protected SeasonType mainSeason;
+    protected SeasonType weakSeason;
 
     protected HashMap<Integer, Integer> stageMap = new HashMap<>();
 
@@ -47,4 +50,10 @@ public abstract class IslandCrop implements Listener {
 
     public abstract void updateAppearance(int stage,Block block);
 
+    public SeasonType getMainSeason() {
+        return mainSeason;
+    }
+    public SeasonType getWeakSeason() {
+        return weakSeason;
+    }
 }

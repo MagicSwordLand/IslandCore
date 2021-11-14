@@ -31,12 +31,14 @@ repositories {
     maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://repo.codemc.org/repository/maven-public/") }
+    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi") }
 }
 
 dependencies {
     compileOnly("dev.reactant:reactant:0.2.3")
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("world.bentobox:bentobox:1.18.0-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.10.10")
 
     // Load jar libraries from "libs" folder
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))

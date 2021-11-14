@@ -2,6 +2,7 @@ package net.brian.islandcore.crop.objects;
 
 import com.google.gson.annotations.Expose;
 import io.github.clayclaw.islandcore.IslandCore;
+import io.github.clayclaw.islandcore.season.SeasonType;
 import kotlin.jvm.Transient;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
@@ -97,8 +98,8 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
         return island.getMemberSet().contains(uuid);
     }
 
-    public void ageAll(int amount){
-        crops.forEach(activeCrop -> activeCrop.age(amount));
+    public void ageAll(SeasonType seasonType){
+        crops.forEach(activeCrop -> activeCrop.age(seasonType));
     }
 
     public void increaseLimit(){
@@ -115,5 +116,9 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
 
     public boolean accededMaxCrop(){
         return crops.size()>=cropLimit;
+    }
+
+    public long getHarvestCount(String id){
+        return cropHarvestCount.getOrDefault(id,0L);
     }
 }

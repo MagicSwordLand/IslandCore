@@ -2,6 +2,8 @@ package net.brian.islandcore.crop.scheduler;
 
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
+import io.github.clayclaw.islandcore.season.SeasonService;
+import io.github.clayclaw.islandcore.season.request.SeasonAPI;
 import io.github.clayclaw.islandcore.updater.AliveIslandUpdater;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLogger;
@@ -20,6 +22,9 @@ public class CropScheduler implements AliveIslandUpdater {
     IslandCropService cropService;
 
 
+    @Inject
+    SeasonService seasonService;
+
     @Override
     public long getCycleTime() {
         return 10;
@@ -29,7 +34,7 @@ public class CropScheduler implements AliveIslandUpdater {
     @Override
     public void onUpdate(@NotNull Island island) {
         IslandCropProfile cropProfile = cropService.getProfile(island.getUniqueId());
-        cropProfile.ageAll(6);
+        cropProfile.ageAll(seasonService.getCurrentSeason());
     }
 
 }

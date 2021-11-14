@@ -2,28 +2,24 @@ package net.brian.islandcore.data;
 
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
+import dev.reactant.reactant.extra.config.type.SharedConfig;
 import io.github.clayclaw.islandcore.IslandCore;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLogger;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
 import net.brian.islandcore.crop.events.IslandUnloadEvent;
-import net.brian.islandcore.crop.objects.IslandCropProfile;
+import net.brian.islandcore.data.config.IslandConfig;
 import net.brian.islandcore.data.events.IslandDataLoadCompleteEvent;
 import net.brian.islandcore.data.events.IslandDataPrepareSaveEvent;
 import net.brian.islandcore.data.gson.PostQuitProcessable;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitTask;
-import org.hamcrest.core.Is;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -33,6 +29,9 @@ public class IslandDataService implements Listener {
     @Inject IslandDataHandlerImpl dataHandler;
 
     List<Island> loadedIsland = new ArrayList<>();
+
+    @Inject(name = "plugins/IslandFarming/config.json")
+    SharedConfig<IslandConfig> sharedConfig;
 
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -93,4 +92,7 @@ public class IslandDataService implements Listener {
         return loadedIsland.contains(island);
     }
 
+    public World getWorld(){
+        return sharedConfig.getContent().getWorld();
+    }
 }

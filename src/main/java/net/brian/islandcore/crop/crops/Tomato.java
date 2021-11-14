@@ -1,6 +1,10 @@
 package net.brian.islandcore.crop.crops;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
+import io.github.clayclaw.islandcore.season.SeasonType;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.item.build.MMOItemBuilder;
+import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.common.persistent.BlockMeta;
@@ -22,6 +26,8 @@ public class Tomato extends IslandCrop{
         this.name = "§c番茄";
         stageMap.put(0,50);
         stageMap.put(1,100);
+        weakSeason = SeasonType.WINTER;
+        mainSeason = SeasonType.SUMMER;
     }
 
 
@@ -35,6 +41,9 @@ public class Tomato extends IslandCrop{
     @Override
     public void drop(int stage, Location location) {
         if(stage == 1){
+            location.getWorld().dropItem(location,MMOItems.plugin.getItem("SEED","TOMATO_SEED"));
+        }
+        if(stage == 2){
             location.getWorld().dropItem(location,new ItemStack(Material.DIAMOND));
         }
     }
