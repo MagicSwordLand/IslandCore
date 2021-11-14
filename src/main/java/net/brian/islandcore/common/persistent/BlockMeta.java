@@ -1,6 +1,7 @@
 package net.brian.islandcore.common.persistent;
 
 import dev.reactant.reactant.extra.command.PermissionRoot;
+import io.github.clayclaw.islandcore.IslandCore;
 import io.lumine.mythic.utils.menu.MenuData;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import org.bukkit.block.Block;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class BlockMeta {
 
-    private static final IslandCropsAndLiveStocks plugin = IslandCropsAndLiveStocks.getInstance();
+    private static final IslandCore plugin = IslandCore.getInstance();
 
     public static String readUUID(Block block){
         return readString(block,"island_uuid");

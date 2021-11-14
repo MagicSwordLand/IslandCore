@@ -81,7 +81,7 @@ public class IslandCropService implements LifeCycleHook, ReloaderComponent {
 
     public static String readSeed(ItemStack itemStack){
         NBTItem nbtItem = NBTItem.get(itemStack);
-        return nbtItem.getString("MMOITEMS_SEEDTYPE");
+        return nbtItem.getString("MMOITEMS_SEED");
     }
 
 

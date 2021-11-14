@@ -1,5 +1,5 @@
 name: IslandCore
-main: net.brian.islandcore.IslandCropsAndLiveStocks
+main: io.github.clayclaw.islandcore.IslandCore
 version: 0.0.1
 api-version: 1.15
 depend:
@@ -7,3 +7,6 @@ depend:
   - BentoBox
   - MMOItems
   - MythicLib
+commands:
+  IslandCrop:
+    usage: /<command>

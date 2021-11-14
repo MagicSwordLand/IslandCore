@@ -44,12 +44,13 @@ public class CropPlacer implements Listener {
                 Optional<Island> optIsland = bentoBox.getIslandsManager().getIslandAt(block.getLocation());
 
                 if(seedType.equals("")) return;
-
-                event.getPlayer().sendMessage("SeedType: "+seedType);
                 if(optIsland.isPresent()){
                     IslandCropProfile cropProfile = cropService.getProfile(optIsland.get().getUniqueId());
                     if(cropProfile == null) return;
-                    if(cropProfile.accededMaxCrop()) return;
+                    if(cropProfile.accededMaxCrop()) {
+                        event.getPlayer().sendMessage("島嶼上作物已達上限 "+cropProfile.getCrops().size()+"/"+cropProfile.getCropLimit());
+                        return;
+                    }
                     IslandCrop cropType = cropService.getCrop(seedType);
                     if(cropType != null){
                         boolean success = cropProfile.plant(cropService.getCrop(seedType),event.getClickedBlock().getLocation().add(0,1,0));
@@ -57,13 +58,16 @@ public class CropPlacer implements Listener {
                             seed.setAmount(seed.getAmount()-1);
                             event.getPlayer().getInventory().setItem(event.getHand(),seed);
                         }
+                        else{
+                            event.getPlayer().sendMessage("該位置已有作物");
+                        }
                     }
                     else{
                         event.getPlayer().sendMessage(ChatColor.RED +"找不到該種子的作物 請洽管理員");
                     }
                 }
             }
-            else{
+            else if(event.getPlayer().isSneaking()){
                 ActiveCrop activeCrop = cropService.getActiveCrop(event.getClickedBlock());
                 if(activeCrop != null){
                     activeCrop.showInfo();

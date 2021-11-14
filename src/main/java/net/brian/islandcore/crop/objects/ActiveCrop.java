@@ -3,8 +3,10 @@ package net.brian.islandcore.crop.objects;
 import com.gmail.filoghost.holographicdisplays.HolographicDisplays;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import io.github.clayclaw.islandcore.IslandCore;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
+import net.brian.islandcore.common.objects.IslandLogger;
 import net.brian.islandcore.common.persistent.BlockMeta;
 import net.brian.islandcore.crop.crops.IslandCrop;
 import net.brian.islandcore.crop.IslandCropService;
@@ -18,7 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class ActiveCrop implements PostProcessable {
 
-    private static final IslandCropsAndLiveStocks plugin = IslandCropsAndLiveStocks.getInstance();
+    private static final IslandCore plugin = IslandCore.getInstance();
     public static IslandCropService islandCropManager;
 
     transient Block block;
@@ -64,13 +66,14 @@ public class ActiveCrop implements PostProcessable {
             if(age >= cropType.getNextStageRequire(stage)){
                 if(stage<cropType.getMaxStage()){
                     stage++;
+                    IslandLogger.logInfo(cropType.getId()+" aged to "+stage);
                     updateAppearance();
                 }
             }
         }
     }
 
-    void updateAppearance(){
+    private void updateAppearance(){
         cropType.updateAppearance(stage,block);
     }
 
@@ -107,13 +110,19 @@ public class ActiveCrop implements PostProcessable {
         return cropType.getGrow_time();
     }
 
+    public int getStage() {
+        return stage;
+    }
+
     @Override
     public void gsonPostDeserialize() {
         block = location.getLocation().getBlock();
         BlockMeta.setData(block,"island_uuid",islandUUID);
         cropType = islandCropManager.getCrop(type);
+        cropType.updateAppearance(stage,block);
         BlockMeta.setData(block,"crop_type",cropType.getId());
     }
+
 
     @Override
     public void gsonPostSerialize() {

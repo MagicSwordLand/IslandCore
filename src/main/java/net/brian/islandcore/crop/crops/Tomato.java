@@ -52,10 +52,12 @@ public class Tomato extends IslandCrop{
             case 1: {
                 ageable.setAge(2);
                 block.setBlockData(ageable);
+                break;
             }
             case 2: {
                 ageable.setAge(ageable.getMaximumAge());
                 block.setBlockData(ageable);
+                break;
             }
         }
     }

@@ -1,6 +1,7 @@
 package net.brian.islandcore.crop.objects;
 
 import com.google.gson.annotations.Expose;
+import io.github.clayclaw.islandcore.IslandCore;
 import kotlin.jvm.Transient;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLocation;
@@ -24,12 +25,13 @@ import java.util.UUID;
 
 public class IslandCropProfile extends IslandData implements PostProcessable {
 
-    public static IslandCropsAndLiveStocks plugin = IslandCropsAndLiveStocks.getInstance();
+    public static IslandCore plugin = IslandCore.getInstance();
 
     private Long lastSaved;
-    private int cropLimit = 0;
+    private int cropLimit = 10;
 
-    List<ActiveCrop> crops = new ArrayList<>();
+    private List<ActiveCrop> crops = new ArrayList<>();
+    private final HashMap<String,Long> cropHarvestCount = new HashMap<>();
 
     private final transient HashMap<Block,ActiveCrop> cropBlockHashMap;
     private transient Island island;
@@ -83,6 +85,10 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
         cropBlockHashMap.remove(block);
     }
 
+    public void addCount(String id){
+        cropHarvestCount.put(id,cropHarvestCount.getOrDefault(id,0L));
+    }
+
     public Island getIsland(){
         return island;
     }
@@ -95,7 +101,19 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
         crops.forEach(activeCrop -> activeCrop.age(amount));
     }
 
+    public void increaseLimit(){
+        cropLimit ++;
+    }
+
+    public int getCropLimit() {
+        return cropLimit;
+    }
+
+    public List<ActiveCrop> getCrops(){
+        return crops;
+    }
+
     public boolean accededMaxCrop(){
-        return false;
+        return crops.size()>=cropLimit;
     }
 }

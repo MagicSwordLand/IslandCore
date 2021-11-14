@@ -29,10 +29,7 @@ public class CropScheduler implements AliveIslandUpdater {
     @Override
     public void onUpdate(@NotNull Island island) {
         IslandCropProfile cropProfile = cropService.getProfile(island.getUniqueId());
-        if(cropProfile != null){
-            cropProfile.ageAll(6);
-            IslandLogger.logInfo("Schedule Aged Crops");
-        }
+        cropProfile.ageAll(6);
     }
 
 }

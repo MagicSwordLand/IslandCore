@@ -2,6 +2,7 @@ package net.brian.islandcore.data;
 
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
+import io.github.clayclaw.islandcore.IslandCore;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLogger;
 import net.brian.islandcore.crop.events.IslandLoadEvent;
@@ -15,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitTask;
 import org.hamcrest.core.Is;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -41,19 +43,20 @@ public class IslandDataService implements Listener {
             dataHandler.getTables().forEach(table ->{
                 Object object = dataHandler.getData(table.getId(),uuid,table.getDataClass());
                 if(object == null) {
-                    Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(),()->event.getTriggered().kick(net.kyori.adventure.text.Component.text("你的島嶼載入資料出錯 請再次嘗試登入 或聯絡管理員")));
+                    Bukkit.getScheduler().runTask(IslandCore.getInstance(),()->event.getTriggered().kick(net.kyori.adventure.text.Component.text("你的島嶼載入資料出錯 請再次嘗試登入 或聯絡管理員")));
                     return;
                 }
-                table.setData(uuid,object);
+                Bukkit.getScheduler().runTask(IslandCore.getInstance(),()->table.setData(uuid,object));
             });
-        }).thenRun(()->{
-            if(isLoaded(event.getIsland())){
-                IslandLogger.logInfo("prepare fire load complete");
-                IslandDataLoadCompleteEvent loadCompleteEvent = new IslandDataLoadCompleteEvent(event.getIsland());
-                loadCompleteEvent.callEvent();
-                IslandLogger.logInfo("Fired");
-            }
-        });
+        }).thenRunAsync(()->{
+            Bukkit.getPluginManager().callEvent(new IslandDataLoadCompleteEvent(event.getIsland()));
+        },IslandCropsAndLiveStocks.getExecutor());
+    }
+
+
+    @EventHandler
+    public void onLoadComplte(IslandDataLoadCompleteEvent event){
+        IslandLogger.logInfo("Loade complete");
     }
 
 
@@ -69,7 +72,7 @@ public class IslandDataService implements Listener {
                if(data != null){
                    dataHandler.saveData(table.getId(),uuid, data);
                    if(data instanceof PostQuitProcessable) {
-                       Bukkit.getScheduler().runTask(IslandCropsAndLiveStocks.getInstance(), ((PostQuitProcessable) data)::onQuit);
+                       Bukkit.getScheduler().runTask(IslandCore.getInstance(), ((PostQuitProcessable) data)::onQuit);
                    }
                }
            });
