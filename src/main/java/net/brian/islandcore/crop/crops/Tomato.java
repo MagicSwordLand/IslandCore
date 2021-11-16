@@ -40,11 +40,10 @@ public class Tomato extends IslandCrop{
 
     @Override
     public void drop(int stage, Location location) {
-        if(stage == 1){
-            location.getWorld().dropItem(location,MMOItems.plugin.getItem("SEED","TOMATO_SEED"));
-        }
+        location.getWorld().dropItem(location,MMOItems.plugin.getItem("SEED","TOMATO_SEED"));
         if(stage == 2){
-            location.getWorld().dropItem(location,new ItemStack(Material.DIAMOND));
+            location.getWorld().dropItem(location,MMOItems.plugin.getItem("SEED","TOMATO_SEED"));
+            location.getWorld().dropItem(location,MMOItems.plugin.getItem("FOOD","TOMATO"));
         }
     }
 

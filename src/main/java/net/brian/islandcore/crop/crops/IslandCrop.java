@@ -20,8 +20,8 @@ public abstract class IslandCrop implements Listener {
     protected int grow_time;
     protected transient Material material;
     protected HarvestType harvestType;
-    protected SeasonType mainSeason;
-    protected SeasonType weakSeason;
+    protected SeasonType mainSeason = SeasonType.SPRING;
+    protected SeasonType weakSeason = SeasonType.WINTER;
 
     protected HashMap<Integer, Integer> stageMap = new HashMap<>();
 

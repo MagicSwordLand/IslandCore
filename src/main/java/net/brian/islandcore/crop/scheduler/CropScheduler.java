@@ -27,7 +27,7 @@ public class CropScheduler implements AliveIslandUpdater {
 
     @Override
     public long getCycleTime() {
-        return 10;
+        return 1200;
     }
 
 

@@ -81,6 +81,9 @@ public class ActiveCrop implements PostProcessable {
         else if(seasonType.equals(cropType.getWeakSeason())){
             age(5);
         }
+        else {
+            age(6);
+        }
     }
 
     private void updateAppearance(){
@@ -101,15 +104,15 @@ public class ActiveCrop implements PostProcessable {
         },40);
         hologram.appendItemLine(new ItemStack(Material.WHEAT_SEEDS));
         hologram.appendTextLine(cropType.getName());
-        hologram.appendTextLine("§7===============");
-        hologram.appendTextLine("§7成長度: "+age+"/"+cropType.getGrow_time());
+        hologram.appendTextLine("§7================");
+        hologram.appendTextLine("§7成長度: "+growthBar());
         if(stage == cropType.getMaxStage()){
             hologram.appendTextLine("§7成長階段: §a成熟");
         }
         else{
             hologram.appendTextLine("§7成長階段: "+stage+"/"+cropType.getMaxStage());
         }
-        hologram.appendTextLine("§7===============");
+        hologram.appendTextLine("§7================");
     }
 
     public int getAge() {
@@ -137,6 +140,19 @@ public class ActiveCrop implements PostProcessable {
     @Override
     public void gsonPostSerialize() {
 
+    }
+
+    private String growthBar(){
+        StringBuilder builder = new StringBuilder("");
+        for(int i=0;i<=getMaxAge();i+=getMaxAge()/6){
+            if(age>i){
+                builder.append("§a§m━");
+            }
+            else{
+                builder.append("§c§m━");
+            }
+        }
+        return builder.toString();
     }
 
 }

@@ -22,7 +22,6 @@ public class CropCount extends SubPlaceholder{
     @Inject
     IslandDataService dataService;
 
-
     @Override
     public String onRequest(OfflinePlayer player, String[] args) {
         Island island = bentoBox.getIslandsManager().getIsland(dataService.getWorld(), User.getInstance(player));
@@ -30,5 +29,6 @@ public class CropCount extends SubPlaceholder{
         IslandCropProfile profile = cropService.getProfile(island.getUniqueId());
         return String.valueOf(profile.getHarvestCount(args[0]));
     }
+
 
 }

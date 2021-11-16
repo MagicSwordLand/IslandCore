@@ -9,19 +9,21 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 @Component
 class SeasonServiceImpl(
-    private val seasonAPI: RetrofitJsonAPI<SeasonAPI>,
+    //private val seasonAPI: RetrofitJsonAPI<SeasonAPI>,
     private val schedulerService: SchedulerService
 ): SeasonService, LifeCycleHook {
 
     private var currentSeason: SeasonType = SeasonType.SPRING
 
     override fun onEnable() {
+        /*
         seasonAPI.service.getSeason()
             .subscribeOn(Schedulers.io())
             .observeOn(schedulerService.mainThreadScheduler)
             .subscribe {
                 currentSeason = it.type
             }
+         */
     }
 
     override fun getCurrentSeason(): SeasonType {
