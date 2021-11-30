@@ -19,6 +19,8 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.UUID;
+
 public class ActiveCrop implements PostProcessable {
 
     private static final IslandCore plugin = IslandCore.getInstance();
@@ -35,14 +37,17 @@ public class ActiveCrop implements PostProcessable {
     int age = 0;
     int stage = 0;
 
-    public ActiveCrop(IslandCrop cropType,IslandLocation location,String uuid){
+    public ActiveCrop(IslandCrop cropType,IslandLocation location,String islandUUID){
         this.location = location;
+        this.islandUUID = islandUUID;
         this.cropType = cropType;
         this.type = cropType.getId();
-        this.islandUUID = uuid;
         block = cropType.instantiate(location,0);
-        BlockMeta.setData(block,"island_uuid",uuid);
+        BlockMeta.setData(block,"island_uuid",islandUUID);
         BlockMeta.setData(block,"crop_type",cropType);
+    }
+
+    public ActiveCrop(){
     }
 
     public IslandLocation getLocation(){
@@ -58,7 +63,7 @@ public class ActiveCrop implements PostProcessable {
     }
 
     public void drop(){
-        cropType.drop(stage,location.getLocation());
+        cropType.drop(this, stage,location.getLocation());
     }
 
     public void age(int amount){
@@ -67,7 +72,6 @@ public class ActiveCrop implements PostProcessable {
             if(age >= cropType.getNextStageRequire(stage)){
                 if(stage<cropType.getMaxStage()){
                     stage++;
-                    IslandLogger.logInfo(cropType.getId()+" aged to "+stage);
                     updateAppearance();
                 }
             }
@@ -86,13 +90,21 @@ public class ActiveCrop implements PostProcessable {
         }
     }
 
+    public void downAge(int amount){
+        age -= amount;
+        while (age<cropType.getNextStageRequire(stage-1)){
+            stage --;
+        }
+        updateAppearance();
+    }
+
     private void updateAppearance(){
         cropType.updateAppearance(stage,block);
     }
 
     public void showInfo(){
         if(hologram == null){
-            hologram = HologramsAPI.createHologram(plugin,location.getLocation().add(+0.5,2.5,+0.5));
+            hologram = HologramsAPI.createHologram(plugin,location.getLocation().add(+0.5,3.5,+0.5));
         }
         else{
             hologramRemoveTask.cancel();
@@ -102,7 +114,7 @@ public class ActiveCrop implements PostProcessable {
             hologram.delete();
             hologram = null;
         },40);
-        hologram.appendItemLine(new ItemStack(Material.WHEAT_SEEDS));
+        hologram.appendItemLine(cropType.getDrop());
         hologram.appendTextLine(cropType.getName());
         hologram.appendTextLine("§7================");
         hologram.appendTextLine("§7成長度: "+growthBar());
@@ -132,7 +144,6 @@ public class ActiveCrop implements PostProcessable {
         block = location.getLocation().getBlock();
         BlockMeta.setData(block,"island_uuid",islandUUID);
         cropType = islandCropManager.getCrop(type);
-        cropType.updateAppearance(stage,block);
         BlockMeta.setData(block,"crop_type",cropType.getId());
     }
 
@@ -144,7 +155,7 @@ public class ActiveCrop implements PostProcessable {
 
     private String growthBar(){
         StringBuilder builder = new StringBuilder("");
-        for(int i=0;i<=getMaxAge();i+=getMaxAge()/6){
+        for(int i=0;i<=getMaxAge();i+=getMaxAge()/8){
             if(age>i){
                 builder.append("§a§m━");
             }
@@ -155,4 +166,7 @@ public class ActiveCrop implements PostProcessable {
         return builder.toString();
     }
 
+    public IslandCropProfile getIsland() {
+        return islandCropManager.getProfile(islandUUID);
+    }
 }

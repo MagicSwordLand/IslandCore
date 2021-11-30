@@ -37,7 +37,7 @@ public interface PostProcessable {
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
             TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
 
-            return new TypeAdapter<>() {
+            return new <T>TypeAdapter<T>() {
                 @Override
                 public void write(JsonWriter jsonWriter, T t) throws IOException {
                     if (t instanceof PostProcessable) {
@@ -56,6 +56,7 @@ public interface PostProcessable {
                     T object = delegate.read(jsonReader);
                     if (object instanceof PostProcessable) {
                         try {
+                            //Run in main thread
                             CompletableFuture.runAsync(((PostProcessable) object)::gsonPostDeserialize,mainThread).get();
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();

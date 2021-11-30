@@ -8,5 +8,5 @@ depend:
   - MMOItems
   - MythicLib
 commands:
-  IslandCrop:
+  IslandCore:
     usage: /<command>

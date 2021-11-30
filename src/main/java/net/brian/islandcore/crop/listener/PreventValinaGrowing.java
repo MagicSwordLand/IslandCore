@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockGrowEvent;
 
 @Component
-public class BlockValinaGrowing implements Listener {
+public class PreventValinaGrowing implements Listener {
 
 
 

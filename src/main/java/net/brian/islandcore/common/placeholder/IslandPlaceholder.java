@@ -51,7 +51,9 @@ public class IslandPlaceholder extends PlaceholderExpansion implements LifeCycle
         String[] args = params.split("_",2);
         SubPlaceholder placeholder = getPlaceHolder(args[0]);
         if(placeholder != null){
-            args = args[1].split("_");
+            if(args.length>1){
+                args = args[1].split("_");
+            }
             return placeholder.onRequest(player,args);
         }
         return null; // Placeholder is unknown by the expansion

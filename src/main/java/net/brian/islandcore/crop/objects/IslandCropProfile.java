@@ -31,20 +31,24 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
     private Long lastSaved;
     private int cropLimit = 10;
 
-    private List<ActiveCrop> crops = new ArrayList<>();
-    private final HashMap<String,Long> cropHarvestCount = new HashMap<>();
+    private final List<ActiveCrop> crops;
+    private final HashMap<String,Long> cropHarvestCount;
 
     private final transient HashMap<Block,ActiveCrop> cropBlockHashMap;
     private transient Island island;
 
     public IslandCropProfile(String uuid) {
         super(uuid);
+        crops = new ArrayList<>();
+        cropHarvestCount  = new HashMap<>();
         cropBlockHashMap = new HashMap<>();
         island = BentoBox.getInstance().getIslands().getIslandById(uuid).get();
     }
 
     public IslandCropProfile(){
         cropBlockHashMap = new HashMap<>();
+        cropHarvestCount  = new HashMap<>();
+        crops = new ArrayList<>();
     }
 
     public boolean plant(IslandCrop crop, Location location){
@@ -60,6 +64,7 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
 
     @Override
     public void gsonPostDeserialize() {
+        IslandLogger.logInfo("IslandCropProfile Post Deserialize ran");
         island = BentoBox.getInstance().getIslandsManager().getIslandById(uuid).orElseGet(()->{
             IslandLogger.logInfo(ChatColor.RED+"Can't find this island from bentonBox!");
             return null;
@@ -87,7 +92,7 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
     }
 
     public void addCount(String id){
-        cropHarvestCount.put(id,cropHarvestCount.getOrDefault(id,0L));
+        cropHarvestCount.put(id,cropHarvestCount.getOrDefault(id,0L)+1);
     }
 
     public Island getIsland(){

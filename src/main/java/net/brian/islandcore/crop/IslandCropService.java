@@ -15,16 +15,15 @@ import net.brian.islandcore.data.IslandDataService;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class IslandCropService implements LifeCycleHook, ReloaderComponent {
 
+    private static IslandCropService instance;
     private final BentoBox bentoBox = BentoBox.getInstance();
 
     @Inject
@@ -35,9 +34,9 @@ public class IslandCropService implements LifeCycleHook, ReloaderComponent {
 
     private final HashMap<String, IslandCrop> cropMap = new HashMap<>();
 
-
     @Override
     public void onEnable(){
+        instance = this;
         islandDataService.register("crops", IslandCropProfile.class);
         ActiveCrop.islandCropManager = this;
         cropMap.put("tomato",new Tomato());
@@ -71,6 +70,14 @@ public class IslandCropService implements LifeCycleHook, ReloaderComponent {
         return null;
     }
 
+    public IslandCropProfile getProfile(UUID playerUUID){
+        Island island = bentoBox.getIslandsManager().getIsland(islandDataService.getWorld(), User.getInstance(playerUUID));
+        if(island != null){
+            return getProfile(island.getUniqueId());
+        }
+        return null;
+    }
+
     public boolean isCrop(Block block){
         return block.hasMetadata("island_uuid");
     }
@@ -84,5 +91,7 @@ public class IslandCropService implements LifeCycleHook, ReloaderComponent {
         return nbtItem.getString("MMOITEMS_SEED");
     }
 
-
+    public static IslandCropService getInstance() {
+        return instance;
+    }
 }

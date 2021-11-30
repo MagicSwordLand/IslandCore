@@ -3,6 +3,7 @@ package net.brian.islandcore.crop.listener;
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import dev.reactant.reactant.core.component.Component;
 import dev.reactant.reactant.core.dependency.injection.Inject;
+import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.common.objects.IslandLogger;
 import net.brian.islandcore.common.persistent.BlockMeta;
 import net.brian.islandcore.crop.IslandCropService;
@@ -13,6 +14,7 @@ import net.brian.islandcore.crop.objects.IslandCropProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -33,17 +35,24 @@ public class CropPlacer implements Listener {
     @Inject
     IslandCropService cropService;
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onRightClick(PlayerInteractEvent event){
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if(event.getClickedBlock().getType().equals(Material.FARMLAND)) {
+            Material blockMat = event.getClickedBlock().getType();
+            if(blockMat.equals(Material.GRASS_BLOCK) || blockMat.equals(Material.DIRT)) {
+                if(!event.getClickedBlock().getLocation().add(0,1,0).getBlock().getType().equals(Material.AIR)) return;
                 ItemStack seed = event.getItem();
                 String seedType = IslandCropService.readSeed(seed);
 
                 Block block = event.getClickedBlock();
                 Optional<Island> optIsland = bentoBox.getIslandsManager().getIslandAt(block.getLocation());
-
                 if(seedType.equals("")) return;
+                Player player = event.getPlayer();
+                if(!player.hasPermission("islandcrop."+seedType)){
+                    player.sendMessage("§e尚未解鎖該作物");
+                    event.setCancelled(true);
+                    return;
+                }
                 if(optIsland.isPresent()){
                     IslandCropProfile cropProfile = cropService.getProfile(optIsland.get().getUniqueId());
                     if(cropProfile == null) return;

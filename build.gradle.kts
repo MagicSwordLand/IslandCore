@@ -36,7 +36,7 @@ repositories {
 
 dependencies {
     compileOnly("dev.reactant:reactant:0.2.3")
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
     compileOnly("world.bentobox:bentobox:1.18.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.10.10")
 

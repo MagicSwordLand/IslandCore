@@ -15,12 +15,13 @@ public class CommandManager implements CommandExecutor, LifeCycleHook {
 
     @Override
     public void onEnable(){
-        IslandCore.getInstance().getCommand("IslandCrop").setExecutor(this);
+        IslandCore.getInstance().getCommand("IslandCore").setExecutor(this);
     }
 
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
         return false;
     }
 }
