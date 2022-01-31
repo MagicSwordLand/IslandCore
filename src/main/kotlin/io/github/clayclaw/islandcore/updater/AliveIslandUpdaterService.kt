@@ -6,8 +6,10 @@ import dev.reactant.reactant.core.dependency.injection.components.Components
 import dev.reactant.reactant.service.spec.server.EventService
 import dev.reactant.reactant.service.spec.server.SchedulerService
 import io.reactivex.rxjava3.disposables.Disposable
+import net.brian.islandcore.data.events.IslandActiveEvent
 import net.brian.islandcore.data.events.IslandDataLoadCompleteEvent
 import net.brian.islandcore.data.events.IslandDataPrepareSaveEvent
+import net.brian.islandcore.data.events.IslandDeactivateEvent
 
 @Component
 class AliveIslandUpdaterService(
@@ -20,7 +22,7 @@ class AliveIslandUpdaterService(
 
     override fun onEnable() {
         eventService {
-            IslandDataLoadCompleteEvent::class.observable()
+            IslandActiveEvent::class.observable()
                 .subscribe { e ->
                     updaterDisposables[e.island.uniqueId] = updaters
                         .map {
@@ -31,7 +33,7 @@ class AliveIslandUpdaterService(
                         .toMutableList()
                 }
 
-            IslandDataPrepareSaveEvent::class.observable()
+            IslandDeactivateEvent::class.observable()
                 .subscribe { e ->
                     updaterDisposables[e.island.uniqueId]?.forEach {
                         it.dispose()

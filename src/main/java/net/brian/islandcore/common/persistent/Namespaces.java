@@ -5,6 +5,6 @@ import net.brian.islandcore.IslandCropsAndLiveStocks;
 import org.bukkit.NamespacedKey;
 
 public class Namespaces {
-    public final static NamespacedKey islandID = new NamespacedKey(IslandCore.getInstance(),"islandID");
+    public final static NamespacedKey islandID = new NamespacedKey(IslandCore.getInstance(),"IslandKey");
     public final static NamespacedKey stock_type = new NamespacedKey(IslandCore.getInstance(),"stock_type");
 }

@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.brian.islandcore.IslandCropsAndLiveStocks;
 import net.brian.islandcore.common.objects.IslandLogger;
+import net.brian.islandcore.data.IslandDataService;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,11 +42,16 @@ public interface PostProcessable {
                 @Override
                 public void write(JsonWriter jsonWriter, T t) throws IOException {
                     if (t instanceof PostProcessable) {
-                        try {
-                            CompletableFuture.runAsync(((PostProcessable) t)::gsonPostSerialize
-                            , mainThread).get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
+                        if(IslandDataService.isDisabling()){
+                           ((PostProcessable) t).gsonPostSerialize();
+                        }
+                        else{
+                            try {
+                                CompletableFuture.runAsync(((PostProcessable) t)::gsonPostSerialize
+                                        , mainThread).get();
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                     delegate.write(jsonWriter,t);

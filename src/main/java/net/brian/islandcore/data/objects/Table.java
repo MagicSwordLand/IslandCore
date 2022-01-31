@@ -1,6 +1,8 @@
 package net.brian.islandcore.data.objects;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class Table<T> {
@@ -30,5 +32,9 @@ public class Table<T> {
 
     public String getId() {
         return id;
+    }
+
+    public Set<Map.Entry<String,T>> getDataEntries() {
+        return dataMap.entrySet();
     }
 }

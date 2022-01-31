@@ -1,94 +1,82 @@
 package net.brian.islandcore.crop.objects;
 
-import com.google.gson.annotations.Expose;
 import io.github.clayclaw.islandcore.IslandCore;
-import io.github.clayclaw.islandcore.season.SeasonType;
-import kotlin.jvm.Transient;
-import net.brian.islandcore.IslandCropsAndLiveStocks;
+import me.casperge.realisticseasons.season.Season;
 import net.brian.islandcore.common.objects.IslandLocation;
 import net.brian.islandcore.common.objects.IslandLogger;
+import net.brian.islandcore.crop.IslandCropService;
 import net.brian.islandcore.crop.crops.IslandCrop;
+import net.brian.islandcore.data.gson.PostActivate;
 import net.brian.islandcore.data.gson.PostProcessable;
 import net.brian.islandcore.data.objects.IslandData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.metadata.LazyMetadataValue;
-import org.checkerframework.checker.units.qual.A;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.persistence.PersistentDataType;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class IslandCropProfile extends IslandData implements PostProcessable {
+public class IslandCropProfile extends IslandData implements PostActivate,PostProcessable {
+
 
     public static IslandCore plugin = IslandCore.getInstance();
 
     private Long lastSaved;
-    private int cropLimit = 10;
+    private int cropLimit = 5;
 
     private final List<ActiveCrop> crops;
     private final HashMap<String,Long> cropHarvestCount;
+    private final Set<String> unlockedCrops;
 
-    private final transient HashMap<Block,ActiveCrop> cropBlockHashMap;
+    private final transient HashMap<ItemFrame,ActiveCrop> cropFrameMap;
     private transient Island island;
 
     public IslandCropProfile(String uuid) {
         super(uuid);
         crops = new ArrayList<>();
+        unlockedCrops = new HashSet<>();
         cropHarvestCount  = new HashMap<>();
-        cropBlockHashMap = new HashMap<>();
+        cropFrameMap = new HashMap<>();
         island = BentoBox.getInstance().getIslands().getIslandById(uuid).get();
     }
 
     public IslandCropProfile(){
-        cropBlockHashMap = new HashMap<>();
+        cropFrameMap = new HashMap<>();
         cropHarvestCount  = new HashMap<>();
         crops = new ArrayList<>();
+        unlockedCrops = new HashSet<>();
     }
 
     public boolean plant(IslandCrop crop, Location location){
-        if(cropBlockHashMap.containsKey(location.getBlock())){
+        if(getNearbyCrops(location) != null){
             return false;
         }
         ActiveCrop activeCrop = new ActiveCrop(crop,new IslandLocation(location),uuid);
+        ItemFrame itemFrame = activeCrop.getItemFrame();
         crops.add(activeCrop);
-        Block cropBlock = activeCrop.getBlock();
-        cropBlockHashMap.put(cropBlock,activeCrop);
+        cropFrameMap.put(itemFrame,activeCrop);
         return true;
     }
 
-    @Override
-    public void gsonPostDeserialize() {
-        IslandLogger.logInfo("IslandCropProfile Post Deserialize ran");
-        island = BentoBox.getInstance().getIslandsManager().getIslandById(uuid).orElseGet(()->{
-            IslandLogger.logInfo(ChatColor.RED+"Can't find this island from bentonBox!");
-            return null;
-        });
-        int minutesPast = (int) ((System.currentTimeMillis()-lastSaved)/60000);
-        crops.forEach(activeCrop -> {
-            cropBlockHashMap.put(activeCrop.getBlock(),activeCrop);
-            activeCrop.age(minutesPast);
-        });
+
+    public ActiveCrop getCrop(ItemFrame entity){
+        return cropFrameMap.get(entity);
     }
 
-    @Override
-    public void gsonPostSerialize() {
-        lastSaved = System.currentTimeMillis();
-    }
+    public void remove(ItemFrame itemFrame){
+        if(itemFrame.getPersistentDataContainer().has(IslandCore.islandKey, PersistentDataType.STRING)){
+            ActiveCrop activeCrop = cropFrameMap.get(itemFrame);
+            if(activeCrop != null){
+                cropFrameMap.remove(itemFrame);
+                crops.remove(activeCrop);
+            }
 
-    public ActiveCrop getCrop(Block block){
-        return cropBlockHashMap.get(block);
-    }
 
-    public void remove(Block block){
-        ActiveCrop activeCrop = cropBlockHashMap.get(block);
-        crops.remove(activeCrop);
-        cropBlockHashMap.remove(block);
+            itemFrame.remove();
+        }
     }
 
     public void addCount(String id){
@@ -103,12 +91,16 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
         return island.getMemberSet().contains(uuid);
     }
 
-    public void ageAll(SeasonType seasonType){
-        crops.forEach(activeCrop -> activeCrop.age(seasonType));
+    public void ageAll(Season season){
+        crops.forEach(activeCrop -> activeCrop.age(season));
     }
 
-    public void increaseLimit(){
-        cropLimit ++;
+    public void increaseLimit(int amount){
+        cropLimit += amount;
+    }
+
+    public void setFarmLand(int amount){
+        cropLimit = amount;
     }
 
     public int getCropLimit() {
@@ -123,7 +115,89 @@ public class IslandCropProfile extends IslandData implements PostProcessable {
         return crops.size()>=cropLimit;
     }
 
+    public boolean hasUnlocked(String type){
+        return unlockedCrops.contains(type);
+    }
+
+    public void unlock(String type){
+        unlockedCrops.add(type);
+    }
+
+    private static ItemFrame getNearbyCrops(Location location){
+        Location loc = location.clone();
+        loc.add(0.5,0,0.5);
+        return loc.getNearbyEntitiesByType(ItemFrame.class,0.1).stream().filter(IslandCropService::isCrop).findFirst().orElse(null);
+    }
+
     public long getHarvestCount(String id){
         return cropHarvestCount.getOrDefault(id,0L);
     }
+
+
+
+    @Override
+    public void onActivate() {
+        refreshCrops();
+    }
+
+    @Override
+    public void onDeactivate() {
+    }
+
+    @Override
+    public void gsonPostDeserialize() {
+        cropLimit = 5;
+        island = BentoBox.getInstance().getIslandsManager().getIslandById(uuid).orElseGet(()->{
+            IslandLogger.logInfo(ChatColor.RED+"Can't find this island from bentonBox!");
+            return null;
+        });
+        int minutesPast = (int) ((System.currentTimeMillis()-lastSaved)/60000);
+        crops.forEach(activeCrop -> activeCrop.flatAge(minutesPast*10));
+    }
+
+    @Override
+    public void gsonPostSerialize() {
+        lastSaved = System.currentTimeMillis();
+    }
+
+    public void refreshCrops(){
+        cropFrameMap.clear();
+        Iterator<ActiveCrop> it = crops.iterator();
+        while (it.hasNext()){
+            ActiveCrop activeCrop = it.next();
+            if(activeCrop.getItemFrame() == null || activeCrop.getItemFrame().isDead()){
+                boolean success = activeCrop.loadItemFrame();
+                if(success){
+                    cropFrameMap.put(activeCrop.getItemFrame(),activeCrop);
+                }
+                else {
+                    Bukkit.getScheduler().runTaskLater(IslandCore.getInstance(),()->{
+                        if(!activeCrop.loadItemFrame()) crops.remove(activeCrop);
+                        else cropFrameMap.put(activeCrop.getItemFrame(),activeCrop);
+                    },400);
+                }
+            }
+            else{
+                cropFrameMap.put(activeCrop.getItemFrame(),activeCrop);
+                activeCrop.cropType.updateAppearance(activeCrop.getStage(),activeCrop.getItemFrame());
+            }
+        }
+    }
+
+    public void checkCropsLocation(){
+        Iterator<Map.Entry<ItemFrame,ActiveCrop>> it = cropFrameMap.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<ItemFrame, ActiveCrop> entry = it.next();
+            ActiveCrop activeCrop = entry.getValue();
+            ItemFrame frame = entry.getKey();
+            IslandLocation location = activeCrop.getLocation();
+            if(!activeCrop.getCropType().checkLocation(location.getBukkitLoc())){
+                it.remove();
+                activeCrop.drop();
+                crops.remove(activeCrop);
+                frame.remove();
+            };
+        }
+    }
+
 }

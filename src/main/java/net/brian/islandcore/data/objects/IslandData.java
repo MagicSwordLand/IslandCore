@@ -10,6 +10,7 @@ public abstract class IslandData {
     public IslandData(String uuid){
         this.uuid = uuid;
     }
+
     public IslandData(){}
 
     public String getUuid() {

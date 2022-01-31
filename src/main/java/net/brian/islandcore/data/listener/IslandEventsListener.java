@@ -1,9 +1,18 @@
 package net.brian.islandcore.data.listener;
 
 import dev.reactant.reactant.core.component.Component;
-import net.brian.islandcore.crop.events.IslandLoadEvent;
-import net.brian.islandcore.crop.events.IslandUnloadEvent;
+import dev.reactant.reactant.core.dependency.injection.Inject;
+import io.github.clayclaw.islandcore.IslandCore;
+import net.brian.islandcore.common.objects.IslandLogger;
+import net.brian.islandcore.data.IslandDataHandlerImpl;
+import net.brian.islandcore.data.IslandDataService;
+import net.brian.islandcore.data.events.IslandActiveEvent;
+import net.brian.islandcore.data.events.IslandDeactivateEvent;
+import net.brian.islandcore.data.events.IslandLoadEvent;
+import net.brian.islandcore.data.events.IslandUnloadEvent;
+import net.brian.islandcore.data.gson.PostActivate;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,15 +21,23 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEnterEvent;
 import world.bentobox.bentobox.api.events.island.IslandExitEvent;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 @Component
 public class IslandEventsListener implements Listener {
+
+    @Inject
+    IslandDataService dataService;
+
+    @Inject
+    IslandDataHandlerImpl dataHandler;
 
     private final BentoBox bentoBox = BentoBox.getInstance();
     private final Logger logger = Logger.getLogger("IslandData");
@@ -31,45 +48,64 @@ public class IslandEventsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event){
-        Optional<Island> island = bentoBox.getIslands().getIslandAt(event.getPlayer().getLocation());
-        island.ifPresent(value -> {
-            if(value.getPlayersOnIsland().size() == 1){
-                IslandLoadEvent islandLoadEvent = new IslandLoadEvent(value,event.getPlayer());
-                islandLoadEvent.callEvent();
-                logger.log(Level.INFO,"Join event");
+
+        Island islandBelong = bentoBox.getIslandsManager().getIsland(dataService.getWorld(), User.getInstance(event.getPlayer()));
+        if(islandBelong != null){
+            for (UUID uuid : islandBelong.getMembers().keySet()){
+                if(!uuid.equals(event.getPlayer().getUniqueId())){
+                    if(Bukkit.getOfflinePlayer(uuid).isOnline()){
+                        return;
+                    }
+                }
             }
-        });
+            new IslandLoadEvent(islandBelong,event.getPlayer()).callEvent();
+        }
+
+
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event){
-        Optional<Island> island = bentoBox.getIslands().getIslandAt(event.getPlayer().getLocation());
-        island.ifPresent(value -> {
-            if(value.getPlayersOnIsland().size() == 1){
-                IslandUnloadEvent islandEvent = new IslandUnloadEvent(value,event.getPlayer());
-                islandEvent.callEvent();
-                log("quit event");
+        Island islandBelong = bentoBox.getIslandsManager().getIsland(dataService.getWorld(), User.getInstance(event.getPlayer()));
+        if(islandBelong != null){
+            for (UUID uuid : islandBelong.getMembers().keySet()){
+                if(!uuid.equals(event.getPlayer().getUniqueId())){
+                    if(Bukkit.getOfflinePlayer(uuid).isOnline()){
+                        return;
+                    }
+                }
             }
-        });
+            new IslandUnloadEvent(islandBelong,event.getPlayer()).callEvent();
+        }
     }
 
     @EventHandler
     public void onEnter(IslandEnterEvent event){
         Island island = event.getIsland();
+        Player player = Bukkit.getPlayer(event.getPlayerUUID());
         if(island.getPlayersOnIsland().size() == 0){
-            IslandLoadEvent islandLoadEvent = new IslandLoadEvent(island, Bukkit.getPlayer(event.getPlayerUUID()));
-            islandLoadEvent.callEvent();
-            log("enter event");
+            new IslandActiveEvent(island,player).callEvent();
+            dataHandler.getTables().forEach(table -> {
+                Object data = table.getData(event.getIsland().getUniqueId());
+                if(data instanceof PostActivate){
+                    Bukkit.getScheduler().runTaskLater(IslandCore.getInstance(), ((PostActivate) data)::onActivate,20L);
+                }
+            });
         }
     }
 
     @EventHandler
     public void onExit(IslandExitEvent event){
         Island island = event.getIsland();
+        Player player = Bukkit.getPlayer(event.getPlayerUUID());
         if(island.getPlayersOnIsland().size() == 1){
-            IslandUnloadEvent islandUnloadEvent = new IslandUnloadEvent(island,Bukkit.getPlayer(event.getPlayerUUID()));
-            islandUnloadEvent.callEvent();
-            log("on Exit");
+            new IslandDeactivateEvent(island,player).callEvent();
+            dataHandler.getTables().forEach(table -> {
+                Object data = table.getData(event.getIsland().getUniqueId());
+                if(data instanceof PostActivate){
+                    ((PostActivate) data).onDeactivate();
+                }
+            });
         }
     }
 

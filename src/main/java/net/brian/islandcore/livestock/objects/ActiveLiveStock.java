@@ -38,7 +38,7 @@ public class ActiveLiveStock implements PostProcessable {
         if(entity != null){
             entity.remove();
         }
-        entity = liveStock.instantiate(location.getLocation());
+        entity = liveStock.instantiate(location.getBukkitLoc());
     }
 
     @Override

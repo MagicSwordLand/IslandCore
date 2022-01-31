@@ -23,9 +23,9 @@ public class CropCount extends SubPlaceholder{
     IslandDataService dataService;
 
     @Override
-    public String onRequest(OfflinePlayer player, String[] args) {
-        if(args.length == 0) return "0";
-        IslandCropProfile profile = cropService.getProfile(player.getUniqueId());
+    public String onRequest(String islandUUID, String[] args) {
+        if(args.length == 0) return "&c0";
+        IslandCropProfile profile = cropService.getProfile(islandUUID);
         if(profile == null) return "0";
         return String.valueOf(profile.getHarvestCount(args[0]));
     }

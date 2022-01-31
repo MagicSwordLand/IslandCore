@@ -7,6 +7,8 @@ depend:
   - BentoBox
   - MMOItems
   - MythicLib
+  - Multiverse-Core
+  - RealisticSeasons
 commands:
   IslandCore:
-    usage: /<command>
+

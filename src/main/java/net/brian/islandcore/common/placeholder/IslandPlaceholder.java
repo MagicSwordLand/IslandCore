@@ -6,6 +6,7 @@ import dev.reactant.reactant.core.dependency.injection.Inject;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.brian.islandcore.crop.IslandCropService;
 import net.brian.islandcore.common.placeholder.subplaceholder.SubPlaceholder;
+import net.brian.islandcore.data.IslandDataService;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,9 @@ import java.util.List;
 
 @Component
 public class IslandPlaceholder extends PlaceholderExpansion implements LifeCycleHook {
+
+    @Inject
+    IslandDataService dataService;
 
     List<SubPlaceholder> placeholders = new ArrayList<>();
 
@@ -54,7 +58,8 @@ public class IslandPlaceholder extends PlaceholderExpansion implements LifeCycle
             if(args.length>1){
                 args = args[1].split("_");
             }
-            return placeholder.onRequest(player,args);
+            String uuid = dataService.getIslandUUIDFromPlayer(player);
+            return placeholder.onRequest(uuid,args);
         }
         return null; // Placeholder is unknown by the expansion
     }

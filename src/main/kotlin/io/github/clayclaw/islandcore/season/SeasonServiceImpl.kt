@@ -24,6 +24,7 @@ class SeasonServiceImpl(
                 currentSeason = it.type
             }
          */
+
     }
 
     override fun getCurrentSeason(): SeasonType {

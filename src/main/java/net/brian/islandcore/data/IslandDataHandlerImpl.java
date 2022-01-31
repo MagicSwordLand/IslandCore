@@ -24,7 +24,7 @@ public class IslandDataHandlerImpl extends DataHandler implements LifeCycleHook 
     @Inject
     private DatabaseService databaseService;
 
-    private HashMap<Class<?>,Table<?>> tables = new HashMap<>();
+    private final HashMap<Class<?>,Table<?>> tables = new HashMap<>();
 
     @Override
     public void register(String id, Class<?> dataClass) {

@@ -16,9 +16,9 @@ public class FarmLand extends SubPlaceholder{
     IslandCropService cropService;
 
     @Override
-    public String onRequest(OfflinePlayer player, String[] args) {
+    public String onRequest(String islandUUID, String[] args) {
         if(args.length == 0) return "0";
-        IslandCropProfile cropProfile = cropService.getProfile(player.getUniqueId());
+        IslandCropProfile cropProfile = cropService.getProfile(islandUUID);
         if(cropProfile != null){
             if(args[0].equals("used")){
                 return String.valueOf(cropProfile.getCrops().size());

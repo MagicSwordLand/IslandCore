@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.Executor
 
@@ -22,6 +23,7 @@ class IslandCore : JavaPlugin() {
 
     override fun onEnable() {
         instance = this
+        islandKey = NamespacedKey(instance,"IslandKey")
         gson = GsonBuilder().registerTypeAdapterFactory(PostProcessingEnabler(this)).create()
     }
 
@@ -35,6 +37,10 @@ class IslandCore : JavaPlugin() {
                 arrayOf("all")
             )
         )
+        MMOItems.plugin.stats.register(DoubleStat("COMPOST_LEN", Material.BONE_MEAL, "肥料時長度", arrayOf("肥料持續的時間,1000為一秒"),
+            arrayOf("all")))
+        MMOItems.plugin.stats.register(DoubleStat("COMPOST_STR", Material.BONE_MEAL, "肥料強度", arrayOf("肥料加速的程度,20->120%"),
+            arrayOf("all")))
         MMOItems.plugin.stats.register(DoubleStat("FODDER", Material.WHEAT, "飼料強度", arrayOf("飼料的恢復得飽實度")))
     }
 
@@ -43,6 +49,8 @@ class IslandCore : JavaPlugin() {
         val log: Logger = LogManager.getLogger("IslandCore")
         @JvmStatic
         lateinit var instance: IslandCore
+        @JvmStatic
+        lateinit var islandKey: NamespacedKey
         @JvmStatic
         fun getExecutor(): Executor {
             return Bukkit.getScheduler().getMainThreadExecutor(instance)

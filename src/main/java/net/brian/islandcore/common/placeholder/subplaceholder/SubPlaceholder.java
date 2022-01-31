@@ -27,5 +27,5 @@ public abstract class SubPlaceholder implements LifeCycleHook {
         return id;
     }
 
-    public abstract String onRequest(OfflinePlayer player, String[] args);
+    public abstract String onRequest(String islandUUID, String[] args);
 }
